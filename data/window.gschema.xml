@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema path="/org/shiva/application/" id="window-position">
+        <key name="pos-x" type="i">
+            <default>30</default>
+            <summary>Horizontal position</summary>
+            <description>The saved horizontal position of window</description>
+        </key>
+        <key name="pos-y" type="i">
+            <default>360</default>
+            <summary>Vertical position</summary>
+            <description>The saved vertical position of window</description>
+        </key>
+        <key name="window-width" type="i">
+            <default>800</default>
+            <summary>window width</summary>
+            <description>The saved window width</description>
+        </key>
+        <key name="window-height" type="i">
+            <default>80</default>
+            <summary>window height</summary>
+            <description>The saved window height</description>
+        </key>
+    </schema>
+</schemalist>
