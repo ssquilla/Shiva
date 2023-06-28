@@ -43,6 +43,7 @@ namespace session{
             WebKit.Settings wks = persistentWebView.get_settings();
             wks.set_enable_write_console_messages_to_stdout (true);
             wks.set_enable_javascript (true);
+            stdout.printf("user agent %s\n",wks.user_agent);
             loginManager = new LoginManager(persistentWebView);
             pageState = PageState.CONNECT_PAGE;
             persistentWebView.submit_form.connect(submitForm);

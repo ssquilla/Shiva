@@ -40,7 +40,7 @@ namespace service {
 			discordBlocks.values = {"sidebar-1tnWFu","container-2cd8Mz"}; //discordBlocks.values = {"guildsnav","sidebar-1tnWFu hasNotice-1s68so","main"};
 			// elements a supprimer
 			session.DeleteElements? discordDelete = null;
-			service.WebViewDescription discord = WebViewDescription("Discord","https://discord.login",discordFields,discordBlocks,discordDelete);
+			service.WebViewDescription discord = WebViewDescription("Discord","https://discord.com/login",discordFields,discordBlocks,discordDelete);
 			webViewsDescription.append_val(discord);
 			/* ====================== messenger ========================= */
 			// informations sur les chmpas de connexion

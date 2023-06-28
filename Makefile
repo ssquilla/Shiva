@@ -9,4 +9,4 @@ clean:
 	rm -r build
 reset: clean all
 dependencies:
-	sudo pacman -S vala libsecret webkit2gtk gtk3
+	sudo pacman -S vala libsecret webkit2gtk gtk3 base-devel
