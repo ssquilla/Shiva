@@ -15,7 +15,9 @@ namespace service {
 		public Array<service.PersistentWebView> webViews {get; set;}
 
 		public Shiva () {
+			//Object (application_id: "org.shiva.application", flags : GLib.ApplicationFlags.IS_SERVICE);
 			Object (application_id: "org.shiva.application", flags : GLib.ApplicationFlags.DEFAULT_FLAGS);
+			
 			//isPrimary = false;
 			set_inactivity_timeout (-1); // never stops
 			add_actions ();
@@ -38,7 +40,7 @@ namespace service {
 			discordBlocks.values = {"sidebar-1tnWFu","container-2cd8Mz"}; //discordBlocks.values = {"guildsnav","sidebar-1tnWFu hasNotice-1s68so","main"};
 			// elements a supprimer
 			session.DeleteElements? discordDelete = null;
-			service.WebViewDescription discord = WebViewDescription("Discord",discordFields,discordBlocks,discordDelete);
+			service.WebViewDescription discord = WebViewDescription("Discord","https://discord.login",discordFields,discordBlocks,discordDelete);
 			webViewsDescription.append_val(discord);
 			/* ====================== messenger ========================= */
 			// informations sur les chmpas de connexion
@@ -52,7 +54,7 @@ namespace service {
 			// elements a supprimer
 			session.DeleteElements? messengerDelete = null;
 
-			service.WebViewDescription messenger = WebViewDescription("Messenger",messengerFields,messengerBlocks,messengerDelete);
+			service.WebViewDescription messenger = WebViewDescription("Messenger","https://messenger.com",messengerFields,messengerBlocks,messengerDelete);
 			webViewsDescription.append_val(messenger);
 			/* ======================    whats'app    ============================== */
 			// champs d'identification

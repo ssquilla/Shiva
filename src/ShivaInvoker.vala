@@ -2,6 +2,7 @@ namespace invoke {
 	public class ShivaInvoker : Gtk.Application {
 
 		public ShivaInvoker () {
+			//Object (application_id: "org.shiva.application", flags : GLib.ApplicationFlags.IS_LAUNCHER);
 			Object (application_id: "org.shiva.application", flags : GLib.ApplicationFlags.DEFAULT_FLAGS);
 			try{
 				register(null);
