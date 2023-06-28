@@ -43,7 +43,7 @@ namespace session{
             WebKit.Settings wks = persistentWebView.get_settings();
             wks.set_enable_write_console_messages_to_stdout (true);
             wks.set_enable_javascript (true);
-            stdout.printf("user agent %s\n",wks.user_agent);
+            setDesktopUserAgent(wks);
             loginManager = new LoginManager(persistentWebView);
             pageState = PageState.CONNECT_PAGE;
             persistentWebView.submit_form.connect(submitForm);
@@ -56,7 +56,15 @@ namespace session{
 
         /* ======================= HIGH LEVEL FEATURES ======================= */
 
-
+        public void setDesktopUserAgent(WebKit.Settings wks){
+            string[] possibles = {"Mobile","MOBILE","mobile","phone"};
+            foreach(string toRemove in possibles){
+                if(wks.user_agent.contains(toRemove)){
+                    stdout.printf("Settings desktop user agent to %s\n",wks.user_agent);
+                    wks.user_agent.remove(toRemove);
+                }
+            }
+        }
 
         public void autoconnect(){
             if (persistentWebView.description.loginFields != null){
@@ -103,7 +111,7 @@ namespace session{
             stdout.printf("Setting split screen ...\n");
             string focusScript = builtScriptFocusBlock();
             ssize_t length = (ssize_t) focusScript.length;
-            stdout.printf(focusScript);
+            //stdout.printf(focusScript);
             persistentWebView.evaluate_javascript(focusScript,length,null,null,null);
             //stdout.printf(focusScript);
         }
@@ -181,7 +189,7 @@ namespace session{
         /* ---------------------- connecting & logins ---------------------- */
         public void submitForm (FormSubmissionRequest request){
             if(pageState == PageState.CONNECT_PAGE){
-                stdout.printf("submit form...\n");
+                //stdout.printf("submit form...\n");
                 if (loginManager!=null){
                     //print("%s\n","heho");
                     GenericArray<string> field_names = new GenericArray<string>();
@@ -276,7 +284,7 @@ namespace session{
                     varName = formatVarName(varName);
                     script += builtScriptSearchElement(clues, fields, varName, "*");
                     script += varName+".remove();\n";
-                    stdout.printf(script);
+                    //stdout.printf(script);
                     ssize_t length = (ssize_t) script.length;
                     persistentWebView.evaluate_javascript(script,length,null,null,null);
                 }
