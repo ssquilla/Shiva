@@ -15,7 +15,7 @@ namespace service{
             this.networkName = networkName;
             this.URL = URL;
             this.loginFields = loginFields;
-            this.pageBlocks = pageBLocks;
+            this.pageBlocks = pageBlocks;
             this.deleteElements = deleteElements;
         }
     }
