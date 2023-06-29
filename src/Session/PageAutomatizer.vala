@@ -57,10 +57,19 @@ namespace session{
         /* ======================= HIGH LEVEL FEATURES ======================= */
 
         public void setDesktopUserAgent(WebKit.Settings wks){
+            stdout.printf("Current user agent to %s\n",wks.user_agent);
             string[] possibles = {"Mobile","MOBILE","mobile","phone"};
             foreach(string toRemove in possibles){
                 if(wks.user_agent.contains(toRemove)){
                     wks.user_agent = wks.user_agent.replace(toRemove,"");
+                    stdout.printf("Settings desktop user agent to %s\n",wks.user_agent);
+                }
+            }
+
+            string[] android = {"android","Android"};
+            foreach(string toRemove in possibles){
+                if(wks.user_agent.contains(toRemove)){
+                    wks.user_agent = wks.user_agent.replace(toRemove,"Linux");
                     stdout.printf("Settings desktop user agent to %s\n",wks.user_agent);
                 }
             }
