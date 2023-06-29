@@ -60,7 +60,7 @@ namespace session{
             string[] possibles = {"Mobile","MOBILE","mobile","phone"};
             foreach(string toRemove in possibles){
                 if(wks.user_agent.contains(toRemove)){
-                    wks.user_agent.replace(toRemove,"");
+                    wks.user_agent = wks.user_agent.replace(toRemove,"");
                     stdout.printf("Settings desktop user agent to %s\n",wks.user_agent);
                 }
             }
