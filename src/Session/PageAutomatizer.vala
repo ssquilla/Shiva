@@ -58,10 +58,12 @@ namespace session{
 
         public void setDesktopUserAgent(WebKit.Settings wks){
             stdout.printf("Current user agent to %s\n",wks.user_agent);
+            wks.user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15";
+            /*
             string[] possibles = {"Mobile","MOBILE","mobile","phone"};
             foreach(string toRemove in possibles){
                 if(wks.user_agent.contains(toRemove)){
-                    wks.user_agent = wks.user_agent.replace(toRemove,"");
+                    wks.user_agent = wks.user_agent.replace(toRemove,"Desktop");
                     stdout.printf("Settings desktop user agent to %s\n",wks.user_agent);
                 }
             }
@@ -69,10 +71,10 @@ namespace session{
             string[] android = {"android","Android"};
             foreach(string toRemove in possibles){
                 if(wks.user_agent.contains(toRemove)){
-                    wks.user_agent = wks.user_agent.replace(toRemove,"Linux");
+                    wks.user_agent = wks.user_agent.replace(toRemove,"Linux x86_64");
                     stdout.printf("Settings desktop user agent to %s\n",wks.user_agent);
                 }
-            }
+            }*/
         }
 
         public void autoconnect(){
