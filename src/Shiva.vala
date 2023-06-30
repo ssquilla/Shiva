@@ -69,7 +69,7 @@ namespace service {
 			whatsappBlocks.values = {"_2Ts6i _3RGKj","main"}; // class = _2Ts6i _2xAQV => block de droite			
 
 			service.WebViewDescription whatsapp = WebViewDescription("What's app","https://web.whatsapp.com",whatsAppFields,whatsappBlocks,whatsappDelete);
-			webViewsDescription.append_val(whatsapp);
+			//webViewsDescription.append_val(whatsapp);
 
 			return webViewsDescription;
 		}

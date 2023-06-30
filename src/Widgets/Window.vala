@@ -15,10 +15,12 @@ namespace GUI{
         public Gtk.Stack stack { get; set; }
 
         construct{
-            
-            window_position = Gtk.WindowPosition.CENTER; 
-            set_default_size (800,200);
-            loadSettings();
+            var defaut_height = 400;
+            var default_width = 80;
+            set_default_size (default_width,defaut_height);
+            window_position = Gtk.WindowPosition.CENTER;
+            //loadSettings();
+            fullscreen();
             delete_event.connect(e => {
                 saveSettings();
                 return hide_on_delete();
