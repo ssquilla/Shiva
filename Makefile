@@ -1,7 +1,7 @@
 
 all:service invoker
 invoker:
-	valac --pkg gtk+-3.0 src/ShivaInvoker.vala -d build/src
+	valac --pkg gtk+-3.0 src/ShivaInvoker.vala -d build
 service:
 	meson build --prefix=/usr
 	cd build;ninja

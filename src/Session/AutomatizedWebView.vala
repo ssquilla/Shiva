@@ -1,9 +1,26 @@
 using WebKit;
 using service;
 
-namespace session{
+namespace session {
 
-    private enum PageState {
+    public struct WebViewDescription {
+        string networkName;
+        string URL;
+        session.LoginFields? loginFields;
+        session.PageBlocks? pageBlocks;
+        session.DeleteElements? deleteElements;
+        //internal TlsCertificate? tls { get; protected set; default = null; }
+
+        public WebViewDescription(string networkName, string URL,LoginFields? loginFields, PageBlocks? pageBlocks, DeleteElements? deleteElements){
+            this.networkName = networkName;
+            this.URL = URL;
+            this.loginFields = loginFields;
+            this.pageBlocks = pageBlocks;
+            this.deleteElements = deleteElements;
+        }
+    }
+
+    public enum PageState {
         CONNECT_PAGE,
         CONNECTED,
         CONNECTING,
@@ -20,11 +37,9 @@ namespace session{
         string[] values;
     }
 
-    class PageAutomatizer {
+    public class AutomatizedWebView : PersistentWebView {
 
         public DeleteElements? deleteElements;
-
-        public PersistentWebView persistentWebView {get; set;}
 
         public PageState pageState;
 
@@ -38,20 +53,24 @@ namespace session{
 
         public Array<string> splitVars;
 
-        public PageAutomatizer (PersistentWebView webview){
-            this.persistentWebView = webview;
-            WebKit.Settings wks = persistentWebView.get_settings();
+        public session.WebViewDescription description {get; set;}
+
+        public AutomatizedWebView (session.WebViewDescription description){
+            base(description.URL, description.networkName);
+            this.description = description;
+            WebKit.Settings wks = get_settings();
             wks.set_enable_write_console_messages_to_stdout (true);
             wks.set_enable_javascript (true);
-            setDesktopUserAgent(wks);
-            loginManager = new LoginManager(persistentWebView);
+            //setDesktopUserAgent(wks);
+            loginManager = new LoginManager(this);
             pageState = PageState.CONNECT_PAGE;
-            persistentWebView.submit_form.connect(submitForm);
+            submit_form.connect(submitForm);
             window = null;
             splitIndex = 0;
-            webview.load_changed.connect(manageLoadChanged);
-            this.deleteElements = webview.description.deleteElements;
+            load_changed.connect(manageLoadChanged);
+            //this.deleteElements = webview.description.deleteElements;
             splitVars = new Array<string>();
+            assert(description.pageBlocks == null || (description.pageBlocks.attributes.length == description.pageBlocks.values.length) );
         }
 
         /* ======================= HIGH LEVEL FEATURES ======================= */
@@ -77,8 +96,12 @@ namespace session{
             }*/
         }
 
+        public bool needLogins(){
+            return (description.loginFields!=null);
+        }
+
         public void autoconnect(){
-            if (persistentWebView.description.loginFields != null){
+            if (description.loginFields != null){
                 assert(pageState == PageState.CONNECT_PAGE);
                 fillLogins();
                 clickRefuseCookiesButton();
@@ -91,7 +114,9 @@ namespace session{
         }
 
         public void clearLogins(){
-            loginManager.removeLogins();
+            if (needLogins()){
+                loginManager.removeLogins();
+            }
         }
 
         public void setWindow(GUI.Window mainWindow){
@@ -99,15 +124,17 @@ namespace session{
         }
         
         public bool isSplitModeActivated(){
-            return persistentWebView.description.pageBlocks != null && persistentWebView.description.pageBlocks.attributes.length>1;
+            return description.pageBlocks != null && description.pageBlocks.attributes.length>1;
         }
 
-        public void shiftBlock(){
+
+        public void tryShiftBlock(){
+            stdout.printf(networkName+" shifting blocks ...\n");
             if(isSplitModeActivated()){
-                splitIndex = (splitIndex + 1) % persistentWebView.description.pageBlocks.attributes.length;
+                splitIndex = (splitIndex + 1) % description.pageBlocks.attributes.length;
                 splitBlock();
             } else {
-                stdout.printf("No blocks to split for %s\n",persistentWebView.networkName);
+                stdout.printf("No blocks to split for %s\n",networkName);
             }
         }
 
@@ -123,7 +150,7 @@ namespace session{
             string focusScript = builtScriptFocusBlock();
             ssize_t length = (ssize_t) focusScript.length;
             //stdout.printf(focusScript);
-            persistentWebView.evaluate_javascript(focusScript,length,null,null,null);
+            evaluate_javascript(focusScript,length,null,null,null);
             //stdout.printf(focusScript);
         }
 
@@ -131,7 +158,7 @@ namespace session{
 
         public void executeScript(string script){
             ssize_t length = (ssize_t) script.length;
-            persistentWebView.evaluate_javascript(script,length,null,null,null);
+            evaluate_javascript(script,length,null,null,null);
         }
 
         public void manageLoadChanged(WebKit.LoadEvent load_event){
@@ -166,11 +193,11 @@ namespace session{
 
         public void loadBlocksVars(){
             splitVars = new Array<string>();
-            var blocksAttributes = persistentWebView.description.pageBlocks.attributes;
-            var blocksValues = persistentWebView.description.pageBlocks.values;
+            var blocksAttributes = description.pageBlocks.attributes;
+            var blocksValues = description.pageBlocks.values;
             string script = "";
             for (int i=0;i<blocksAttributes.length;i++){
-                var varName = persistentWebView.description.networkName + "_" + blocksAttributes[i] + "_" + blocksValues[i];
+                var varName = description.networkName + "_" + blocksAttributes[i] + "_" + blocksValues[i];
                 varName = formatVarName(varName);
                 splitVars.append_val(varName);
                 assert(!varName.contains(" "));
@@ -180,8 +207,8 @@ namespace session{
         }
 
         public string builtScriptFocusBlock(){
-            var blocksAttributes = persistentWebView.description.pageBlocks.attributes;
-            var blocksValues = persistentWebView.description.pageBlocks.values;
+            //var blocksAttributes = description.pageBlocks.attributes;
+            //var blocksValues = description.pageBlocks.values;
             string script = "";
             for (int i=0;i<splitVars.length;i++){
                 var varName = splitVars.index(i);
@@ -211,9 +238,9 @@ namespace session{
                         string? loginValue = null;
                         string? passValue = null;
                         for(int i=0;i<field_names.length;i++){
-                            if(field_names[i]==persistentWebView.loginFields.loginField){
+                            if(field_names[i]==description.loginFields.loginField){
                                 loginValue = field_values[i];
-                            } else if(field_names[i]==persistentWebView.loginFields.passField){
+                            } else if(field_names[i]==description.loginFields.passField){
                                 passValue = field_values[i];
                             }
                             //stdout.printf ("%s",field_names[i]+": "+field_values[i]+"\n");
@@ -247,8 +274,8 @@ namespace session{
             if (logins != null){
                 loginValue = logins.login;
                 passValue = logins.password;
-                var loginField = persistentWebView.loginFields.loginField;
-                var passField = persistentWebView.loginFields.passField;
+                var loginField = description.loginFields.loginField;
+                var passField = description.loginFields.passField;
                 //stdout.printf("%s,%s,%s,%s",loginField,loginValue,passField,passValue);
                 //string script = "console.log('Filling fields ... !');";
                 string script = "";
@@ -269,12 +296,12 @@ namespace session{
         }
 
         public void fillLogins(){
-            if (persistentWebView.needLogins()){
+            if (needLogins()){
                 var script = buildConnectJs();
                 if (script != null){
                     stdout.printf("Recovering logins ...\n");
                     ssize_t length = (ssize_t) script.length;
-                    persistentWebView.evaluate_javascript(script,length,null,null,null);
+                    evaluate_javascript(script,length,null,null,null);
                 } else {
                     stdout.printf("No logins found.\n");
                 }
@@ -282,10 +309,10 @@ namespace session{
         }
 
         public void executeDeleteElements(){
-            if(persistentWebView.description.deleteElements != null){
+            if(description.deleteElements != null){
                 stdout.printf("Deleting some elements ...\n");
-                string[] deleteAttributes = persistentWebView.description.deleteElements.attributes;
-                string[] deleteValues = persistentWebView.description.deleteElements.values;
+                string[] deleteAttributes = description.deleteElements.attributes;
+                string[] deleteValues = description.deleteElements.values;
                 
                 for(int i=0;i<deleteAttributes.length;i++){
                     string script = "";
@@ -297,7 +324,7 @@ namespace session{
                     script += varName+".remove();\n";
                     //stdout.printf(script);
                     ssize_t length = (ssize_t) script.length;
-                    persistentWebView.evaluate_javascript(script,length,null,null,null);
+                    evaluate_javascript(script,length,null,null,null);
                 }
             }
         }
@@ -379,7 +406,7 @@ namespace session{
             var script = builtScriptSearchSubmitButton(clues, fields, buttonName);
             script = addClickToScript(script,buttonName);
             ssize_t length = (ssize_t) script.length;
-            persistentWebView.evaluate_javascript(script,length,null,null,null);
+            evaluate_javascript(script,length,null,null,null);
             stdout.printf("Trying to locate and click on 'login' button\n");
         }
 
@@ -405,7 +432,7 @@ namespace session{
             var script = builtScriptSearchSubmitButton(clues, fields, buttonName);
             script = addClickToScript(script,buttonName);
             ssize_t length = (ssize_t) script.length;
-            persistentWebView.evaluate_javascript(script,length,null,null,null);
+            evaluate_javascript(script,length,null,null,null);
             stdout.printf("Trying to locate and click on 'refuse cookies' button\n");
         }
 

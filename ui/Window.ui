@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <template class="GUIWindow" parent="GtkApplicationWindow">
+    <property name="title">Shiva</property>
+    <property name="icon_name">img/app_icon.png</property>
+    <child>
+        <object class="GtkBox">
+          <property name="orientation">vertical</property>
+          <property name="homogeneous">no</property>
+          <child>
+            <object class="GUINavigationBar" id="navigationBar">
+            </object>
+          </child>
+          <child>
+            <object class="GUIWindowContent" id="windowContent"> 
+             <property name="vexpand">yes</property>
+             <property name="valign">fill</property>
+            </object>
+          </child>
+        </object>
+    </child>
+  </template>
+</interface>

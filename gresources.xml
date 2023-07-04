@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/">
+    <file preprocess="xml-stripblanks">ui/Window.ui</file>
+    <file compressed="true">data/gtk3.css</file>
+  </gresource>
+</gresources>

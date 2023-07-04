@@ -6,13 +6,13 @@ namespace service {
 
 		//public bool isPrimary { get; set;}
 
-		private bool isSet {get; set;}
+		public bool isSet {get; set;}
 	
-		private GUI.Window window{get; set;}
+		public GUI.Window window{get; set;}
 	
-		private NotificationManager notificationManager;
+		//public NotificationManager notificationManager{get; set;}
 
-		public Array<service.PersistentWebView> webViews {get; set;}
+		public Array<session.AutomatizedWebView> webViews {get; set;}
 
 		public Shiva () {
 			//Object (application_id: "org.shiva.application", flags : GLib.ApplicationFlags.IS_SERVICE);
@@ -22,7 +22,7 @@ namespace service {
 			set_inactivity_timeout (-1); // never stops
 			add_actions ();
 			window = null;
-			webViews = new Array<PersistentWebView>();
+			//webViews = new Array<session.AutomatizedWebView>();
 			isSet = false;
 		}
 
@@ -40,7 +40,7 @@ namespace service {
 			discordBlocks.values = {"sidebar-1tnWFu","container-2cd8Mz"}; //discordBlocks.values = {"guildsnav","sidebar-1tnWFu hasNotice-1s68so","main"};
 			// elements a supprimer
 			session.DeleteElements? discordDelete = null;
-			service.WebViewDescription discord = WebViewDescription("Discord","https://discord.com/login",discordFields,discordBlocks,discordDelete);
+			session.WebViewDescription discord = WebViewDescription("Discord","https://discord.com/login",discordFields,discordBlocks,discordDelete);
 			webViewsDescription.append_val(discord);
 			/* ====================== messenger ========================= */
 			// informations sur les chmpas de connexion
@@ -54,7 +54,7 @@ namespace service {
 			// elements a supprimer
 			session.DeleteElements? messengerDelete = null;
 
-			service.WebViewDescription messenger = WebViewDescription("Messenger","https://messenger.com",messengerFields,messengerBlocks,messengerDelete);
+			session.WebViewDescription messenger = WebViewDescription("Messenger","https://messenger.com",messengerFields,messengerBlocks,messengerDelete);
 			webViewsDescription.append_val(messenger);
 			/* ======================    whats'app    ============================== */
 			// champs d'identification
@@ -68,23 +68,23 @@ namespace service {
 			whatsappBlocks.attributes = {"class","id"}; // class = _2Ts6i _3RGKj => block de gauche
 			whatsappBlocks.values = {"_2Ts6i _3RGKj","main"}; // class = _2Ts6i _2xAQV => block de droite			
 
-			service.WebViewDescription whatsapp = WebViewDescription("What's app","https://web.whatsapp.com",whatsAppFields,whatsappBlocks,whatsappDelete);
-			//webViewsDescription.append_val(whatsapp);
+			session.WebViewDescription whatsapp = WebViewDescription("What's app","https://web.whatsapp.com",whatsAppFields,whatsappBlocks,whatsappDelete);
+			webViewsDescription.append_val(whatsapp);
 
 			return webViewsDescription;
 		}
 
 		public void setupWebViews(){
-			webViews = new Array<service.PersistentWebView>();
+			webViews = new Array<session.AutomatizedWebView>();
 			var webViewsDescription = getWebViewsDescription();
-			foreach(service.WebViewDescription description in webViewsDescription){
+			foreach(session.WebViewDescription description in webViewsDescription){
 				stdout.printf("Lauching %s service\n",description.URL);
 				if (description.loginFields!=null){
 					//stdout.printf("Login fields : %s , %s \n",description.loginFields.loginField,description.loginFields.passField);
 				}
-				webViews.append_val(new service.PersistentWebView(description,description.loginFields));
+				webViews.append_val(new session.AutomatizedWebView(description));
 			}
-			notificationManager = new NotificationManager(this,webViews);
+			//notificationManager = new NotificationManager(this,webViews);
 		}
 	
 		public void openWindow(){
@@ -92,7 +92,8 @@ namespace service {
 				stdout.printf("opening window ...\n");
 				window = new GUI.Window(this,webViews);
 				add_window(window);
-				foreach(service.PersistentWebView wb in webViews){
+				window.setupWindowContent(webViews);
+				foreach(session.AutomatizedWebView wb in webViews){
 					//wb.tryShiftBlock();
 					wb.setWindow(window);
 				}
@@ -141,7 +142,7 @@ namespace service {
 		}
 		
 		public void clearLogins(){
-			foreach(service.PersistentWebView wv in webViews){
+			foreach(session.AutomatizedWebView wv in webViews){
 				wv.clearLogins();
 			}
 		}

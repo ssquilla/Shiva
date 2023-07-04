@@ -1,0 +1,13 @@
+.GUINavigationBar, .navigationbar box {
+    border-top-width: 0;
+    background: black;
+  }
+
+  button {
+    color: #ff00ea;
+    font: 12px "Comic Sans";
+  }
+
+  button:hover {
+    background-color: #3085a9;
+  }
