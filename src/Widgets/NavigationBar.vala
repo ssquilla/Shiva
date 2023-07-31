@@ -1,9 +1,22 @@
 namespace GUI{
+    
+    public class NetworksButtonsBar : Gtk.ScrolledWindow{
+        construct {
+            min_content_width = 200;
+            //max_content_width = 30;
+        }
+
+        public void setWidth(int width){
+            min_content_width = width;
+        }
+    }
+    
     public class NavigationBar : Gtk.ActionBar {
 
         private Gtk.Button switchButton;
         private Gtk.StackSwitcher stackSwitcher;
         private Gtk.Window main_window;
+        public NetworksButtonsBar scrollableEmbedder;
 
         construct {
             switchButton = new Gtk.Button.with_label("Switch");
@@ -14,8 +27,11 @@ namespace GUI{
             });
             pack_start(switchButton);
 
+            scrollableEmbedder = new NetworksButtonsBar();
             stackSwitcher = new Gtk.StackSwitcher ();
-            set_center_widget(stackSwitcher);
+
+            scrollableEmbedder.add(stackSwitcher);
+            set_center_widget(scrollableEmbedder);
 
             var menu_button = new Gtk.Button.from_icon_name("open-menu",Gtk.IconSize.LARGE_TOOLBAR);
             menu_button.valign = Gtk.Align.CENTER;
