@@ -3,11 +3,38 @@
     background: black;
   }
 
-  button {
-    color: #ff00ea;
-    font: 12px "Comic Sans";
+  .stack-switcher button {
+    background: black;
+    min-height: 1cm;
+    min-width: 1cm;
+    text-decoration: none;
+    border-radius: 50%; 
+    color:rgb(239, 239, 245);
+    font-size: 20px;
   }
 
-  button:hover {
-    background-color: #3085a9;
+  .stack-switcher button:checked {
+    background-color: rgb(94, 91, 91);
   }
+
+  <!-- background:rgba(0,0,0,0); border-radius: 50%;  -->
+
+  .stack-switcher label {
+    border: 0px;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-shadow: inset 0 0 0 1px blue;
+    color: white;
+}
+
+  radio:hover {
+    background-color: #2817c7;
+  }
+
+
+  scrolledwindow {
+    background: rgb(61, 255, 245);
+    width:50%;
+  }
+  
