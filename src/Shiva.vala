@@ -41,7 +41,7 @@ namespace service {
 			// elements a supprimer
 			session.DeleteElements? discordDelete = null;
 			session.WebViewDescription discord = WebViewDescription("Discord","https://discord.com/login",discordFields,discordBlocks,discordDelete);
-			webViewsDescription.append_val(discord);
+			//webViewsDescription.append_val(discord);
 			/* ====================== messenger ========================= */
 			// informations sur les chmpas de connexion
 			var messengerFields = session.LoginFields();
@@ -69,8 +69,24 @@ namespace service {
 			whatsappBlocks.values = {"_2Ts6i _3RGKj","main"}; // class = _2Ts6i _2xAQV => block de droite			
 
 			session.WebViewDescription whatsapp = WebViewDescription("What's app","https://web.whatsapp.com",whatsAppFields,whatsappBlocks,whatsappDelete);
-			webViewsDescription.append_val(whatsapp);
+			//webViewsDescription.append_val(whatsapp);
 
+
+			/* debug  */
+			var debugFields = session.LoginFields();
+			debugFields.loginField = "email";
+			debugFields.passField = "pass";
+			// informations sur les blocks de la page
+			var debugBlocks = session.PageBlocks();
+			debugBlocks.attributes = {"role","role"};
+			debugBlocks.values = {"navigation","main"};
+			// elements a supprimer
+			session.DeleteElements? debugDelete = null;
+
+			session.WebViewDescription debug = WebViewDescription("Google","https://google.com",debugFields,debugBlocks,debugDelete);
+			//webViewsDescription.append_val(debug);	
+			//webViewsDescription.append_val(debug);	
+			//webViewsDescription.append_val(debug);			
 			return webViewsDescription;
 		}
 
@@ -132,15 +148,29 @@ namespace service {
 			//print("Activate\n");
 			this.hold ();
 			if (!isSet){
+				Notify.init ("Shiva");
 				isSet = true;
 				//print("Primary app initialising ...\n");
 				setupWebViews();
 				//notificationManager.allow();
 				print ("Primary app initialised\n");
+				sendNotify("Service Startup");
 			}
 			this.release ();
 		}
 		
+        public void sendNotify(string content){
+            string summary = "Shiva - notification";
+            // = Gtk.Stock.DIALOG_INFO
+            string icon = "dialog-information";
+            try {
+                Notify.Notification notification = new Notify.Notification (summary, content, icon);
+                notification.show ();
+            } catch (Error e) {
+                error ("Error: %s", e.message);
+            }
+        }
+
 		public void clearLogins(){
 			foreach(session.AutomatizedWebView wv in webViews){
 				wv.clearLogins();
